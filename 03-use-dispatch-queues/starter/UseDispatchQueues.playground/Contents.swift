@@ -1,10 +1,9 @@
-// Copyright (c) 2020 Razeware LLC
+// Copyright (c) 2023 Kodeco Inc.
 // For full license & permission details, see LICENSE.markdown.
 
-import UIKit
-//: Specify indefinite execution to prevent the playground from killing background tasks when the "main" thread has completed.
+import Foundation
 import PlaygroundSupport
-PlaygroundPage.current.needsIndefiniteExecution = true
+
 //: # Use Dispatch Queues
 //: ## Using a Global Queue
 // TODO: Get the .userInitiated global dispatch queue
@@ -74,8 +73,6 @@ func changeValue() {
 
 //: Now reset `value`, then run `changeValue()` __synchronously__, to block the current thread until the `changeValue` task has finished, thus removing the race condition:
 // TODO
-
-
 
 
 // Allow time for sleeping tasks to finish before letting the playground finish execution:

@@ -1,10 +1,8 @@
-// Copyright (c) 2020 Razeware LLC
+// Copyright (c) 2023 Kodeco Inc.
 // For full license & permission details, see LICENSE.markdown.
 
 import UIKit
 import PlaygroundSupport
-PlaygroundPage.current.needsIndefiniteExecution = true
-
 //: # Use a Dispatch Work Item
 let mainQueue = DispatchQueue.main
 let userQueue = DispatchQueue.global(qos: .userInitiated)
@@ -40,14 +38,14 @@ print(">> Waiting for task 1...")
 
 sleep(2)  // give task 1 time to finish
 //: Other advantages of work items: You can construct a simple dependency, for example, to update task 1 after it completes, and you can cancel work items.
-enum Queues { case mainQ, userQ }
+enum Queues { case main, user }
 // TODO later: Set specific key for each queue.
 
 //func whichQueue(workItem: String) {
 //  switch DispatchQueue.getSpecific(key: specificKey) {
-//  case .mainQ:
+//  case .main:
 //    print(">> \(workItem) is running on mainQueue")
-//  case .userQ:
+//  case .user:
 //    print(">> \(workItem) is running on userQueue")
 //  case .none:
 //    break
@@ -62,7 +60,7 @@ enum Queues { case mainQ, userQ }
 
 
 
-//: Execute `updateWorkItem` after `backgroundUIWorkItem` finishes:
+//: Execute `updateUIWorkItem` after `backgroundWorkItem` finishes:
 print(">> Run task 2 work item after task 1 work item finishes.")
 // TODO
 
@@ -70,13 +68,13 @@ print(">> Run task 2 work item after task 1 work item finishes.")
 
 //: Task 2 runs after task 1, even though task 1 takes longer.
 //:
-//: Cancel `updateWorkItem`:
+//: Cancel `updateUIWorkItem`:
 print(">> Cancel task 2 work item before task 1 work item finishes.")
 // TODO
 
 
 
 //: Now task 2 doesn't run at all.
-//:
+// Stop execution of the playground.
 sleep(5)
 PlaygroundPage.current.finishExecution()

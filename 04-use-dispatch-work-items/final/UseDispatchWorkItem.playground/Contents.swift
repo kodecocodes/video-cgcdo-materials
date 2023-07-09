@@ -1,10 +1,8 @@
-// Copyright (c) 2020 Razeware LLC
+// Copyright (c) 2023 Kodeco Inc.
 // For full license & permission details, see LICENSE.markdown.
 
 import UIKit
 import PlaygroundSupport
-PlaygroundPage.current.needsIndefiniteExecution = true
-
 //: # Use a Dispatch Work Item
 let mainQueue = DispatchQueue.main
 let userQueue = DispatchQueue.global(qos: .userInitiated)
@@ -27,6 +25,8 @@ userQueue.async {
 let workItem = DispatchWorkItem {
   task1()
 }
+
+
 //: And execute it on `userQueue`:
 print(">> Run task 1 as a work item.")
 // DONE
@@ -36,19 +36,24 @@ print(">> Waiting for task 1...")
 // DONE
 if workItem.wait(timeout: .now() + 3) == .timedOut {
   print("I got tired of waiting.")
-} else { print("Work item completed.") }
+} else {
+  print("Work item completed.")
+}
+
+
+
 sleep(2)  // give task 1 time to finish
 //: Other advantages of work items: You can construct a simple dependency, for example, to update task 1 after it completes, and you can cancel work items.
-enum Queues { case mainQ, userQ }
+enum Queues { case main, user }
 // DONE later: Set specific key for each queue.
 let specificKey = DispatchSpecificKey<Queues>()
-mainQueue.setSpecific(key: specificKey, value: .mainQ)
-userQueue.setSpecific(key: specificKey, value: .userQ)
+mainQueue.setSpecific(key: specificKey, value: .main)
+userQueue.setSpecific(key: specificKey, value: .user)
 func whichQueue(workItem: String) {
   switch DispatchQueue.getSpecific(key: specificKey) {
-  case .mainQ:
+  case .main:
     print(">> \(workItem) is running on mainQueue")
-  case .userQ:
+  case .user:
     print(">> \(workItem) is running on userQueue")
   case .none:
     break
@@ -63,23 +68,28 @@ let backgroundWorkItem = DispatchWorkItem {
 }
 let updateUIWorkItem = DispatchWorkItem {
   task2()
-  whichQueue(workItem: "updateWorkItem")
+  whichQueue(workItem: "updateUIWorkItem")
 }
-//: Execute `updateWorkItem` after `backgroundUIWorkItem` finishes:
+
+//: Execute `updateUIWorkItem` after `backgroundWorkItem` finishes:
 print(">> Run task 2 work item after task 1 work item finishes.")
 // DONE
-backgroundWorkItem.notify(
-  queue: DispatchQueue.global(),
-  execute: updateUIWorkItem)
 userQueue.async(execute: backgroundWorkItem)
+backgroundWorkItem.notify(queue: mainQueue,
+                          execute: updateUIWorkItem)
+
+
 //: Task 2 runs after task 1, even though task 1 takes longer.
 //:
-//: Cancel `updateWorkItem`:
+//: Cancel `updateUIWorkItem`:
 print(">> Cancel task 2 work item before task 1 work item finishes.")
 // DONE
 if !updateUIWorkItem.isCancelled {
   updateUIWorkItem.cancel()
 }
+
+
 //: Now task 2 doesn't run at all.
+// Stop execution of the playground.
 sleep(5)
 PlaygroundPage.current.finishExecution()

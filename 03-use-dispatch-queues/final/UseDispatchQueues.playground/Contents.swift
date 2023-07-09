@@ -1,10 +1,8 @@
-// Copyright (c) 2020 Razeware LLC
+// Copyright (c) 2023 Kodeco Inc.
 // For full license & permission details, see LICENSE.markdown.
 
-import UIKit
-//: Specify indefinite execution to prevent the playground from killing background tasks when the "main" thread has completed.
+import Foundation
 import PlaygroundSupport
-PlaygroundPage.current.needsIndefiniteExecution = true
 //: # Use Dispatch Queues
 //: ## Using a Global Queue
 // DONE: Get the .userInitiated global dispatch queue
@@ -41,7 +39,7 @@ sleep(2)
 //: ## Using a Private Serial Queue
 //: The only global serial queue is `DispatchQueue.main`, but you can create a private serial queue. Note that `.serial` is the default attribute for a private dispatch queue:
 // DONE: Create mySerialQueue
-let mySerialQueue = DispatchQueue(label: "com.raywenderlich.serial")
+let mySerialQueue = DispatchQueue(label: "com.kodeco.serial")
 
 print("\n=== Starting mySerialQueue ===")
 // DONE: Dispatch tasks onto mySerialQueue
@@ -58,7 +56,8 @@ sleep(2)
 //: ## Creating a Private Concurrent Queue
 //: To create a private __concurrent__ queue, specify the `.concurrent` attribute.
 // DONE: Create workerQueue
-let workerQueue = DispatchQueue(label: "com.raywenderlich.worker", attributes: .concurrent)
+let workerQueue = DispatchQueue(label: "com.kodeco.worker",
+                                attributes: .concurrent)
 print("\n=== Starting workerQueue ===")
 // DONE: Dispatch tasks onto workerQueue
 duration {
