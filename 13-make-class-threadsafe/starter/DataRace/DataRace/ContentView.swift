@@ -29,3 +29,66 @@
 /// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 /// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 /// THE SOFTWARE.
+
+import SwiftUI
+
+struct ContentView: View {
+  func raceYou() {
+    var counter = 0
+
+    let queue = DispatchQueue(label: "notMain")
+    queue.async {
+      for _ in 1 ... 10 {
+        Thread.sleep(forTimeInterval: Double.random(in: 0.1..<0.5))
+        counter += 1
+      }
+      print(">>> notMain Queue counter = \(counter)")
+    }
+
+    DispatchQueue.main.async {
+      for _ in 1 ... 10 {
+        Thread.sleep(forTimeInterval: Double.random(in: 0.1..<0.5))
+        counter += 1
+      }
+      print(">>> Main Queue counter = \(counter)")
+    }
+  }
+
+  var body: some View {
+    VStack {
+      Image(systemName: "globe")
+        .imageScale(.large)
+        .foregroundColor(.accentColor)
+      Text("Hello, world!")
+    }
+    .onAppear { raceYou() }
+    .padding()
+  }
+}
+
+struct ContentView_Previews: PreviewProvider {
+  static var previews: some View {
+    ContentView()
+  }
+}
+
+struct DataRace {
+
+
+  func raceYou() {
+    var counter = 0
+    let queue = DispatchQueue(label: "q")
+    queue.async {
+      for _ in 1 ... 10000 {
+        Thread.sleep(forTimeInterval: 0.1)
+        counter += 1
+      }
+    }
+
+    DispatchQueue.main.async {
+      for _ in 1 ... 10000 {
+        counter += 1
+      }
+    }
+  }
+}

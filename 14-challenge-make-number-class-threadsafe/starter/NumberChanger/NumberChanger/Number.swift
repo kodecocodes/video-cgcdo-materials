@@ -29,3 +29,29 @@
 /// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 /// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 /// THE SOFTWARE.
+
+import Foundation
+
+// Thread-safe Number
+// TODO: Use an isolationQueue with dispatch barrier to make this class thread-safe.
+
+class Number {
+  var value: Int
+  var name: String
+
+  init(value: Int, name: String) {
+    self.value = value
+    self.name = name
+  }
+
+  func changeNumber(_ value: Int, name: String) {
+    randomDelay(0.1)
+    self.value = value
+    randomDelay(0.5)
+    self.name = name
+  }
+
+  var number: String {
+    "\(value) :: \(name)"
+  }
+}

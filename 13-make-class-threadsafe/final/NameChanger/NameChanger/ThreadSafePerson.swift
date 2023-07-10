@@ -29,3 +29,24 @@
 /// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 /// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 /// THE SOFTWARE.
+
+import Foundation
+
+class ThreadSafePerson: Person {
+  let isolationQueue = DispatchQueue(
+    label: "com.raywenderlich.person.isolation",
+    attributes: .concurrent)
+
+  override func changeName(firstName: String, lastName: String) {
+    isolationQueue.async(flags: .barrier) {
+      super.changeName(firstName: firstName, lastName: lastName)
+    }
+  }
+
+  // Use .sync to safely access value
+  override var name: String {
+    isolationQueue.sync {
+      super.name
+    }
+  }
+}

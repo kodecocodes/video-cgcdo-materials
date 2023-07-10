@@ -29,3 +29,49 @@
 /// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 /// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 /// THE SOFTWARE.
+
+import SwiftUI
+
+// TODO: Use TSan to check for race condition
+// TODO: Make Number class in Number.swift thread-safe to remove race condition
+
+struct ContentView: View {
+  let changingNumber = Number(value: 0, name: "zero")
+  let numberArray = [(1, "one"), (2, "two"), (3, "three"), (4, "four"), (5, "five"), (6, "six")]
+  let workerQueue = DispatchQueue(label: "com.kodeco.worker", attributes: .concurrent)
+  let numberGroup = DispatchGroup()
+
+  var body: some View {
+    VStack {
+      Image(systemName: "globe")
+        .imageScale(.large)
+        .foregroundColor(.accentColor)
+      Text("Hello, world!")
+    }
+    .padding()
+    .onAppear {
+      changeNumber()
+    }
+  }
+
+  // When made thread-safe: printed pairs match, although not all will print, due to random delays
+  func changeNumber() {
+    for pair in numberArray {
+      workerQueue.async(group: numberGroup) {
+        self.changingNumber.changeNumber(pair.0, name: pair.1)
+        print("Current number: \(self.changingNumber.number)")
+      }
+    }
+
+    // When made thread-safe, prints Final number: 6 :: six
+    numberGroup.notify(queue: DispatchQueue.main) {
+      print("Final number: \(self.changingNumber.number)")
+    }
+  }
+}
+
+struct ContentView_Previews: PreviewProvider {
+  static var previews: some View {
+    ContentView()
+  }
+}
