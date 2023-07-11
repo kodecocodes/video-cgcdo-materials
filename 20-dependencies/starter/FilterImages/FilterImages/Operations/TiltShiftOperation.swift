@@ -29,3 +29,43 @@
 /// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 /// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 /// THE SOFTWARE.
+
+import UIKit
+
+final class TiltShiftOperation: Operation {
+  private static let context = CIContext()
+
+  var outputImage: UIImage?
+
+  private let inputImage: UIImage?
+
+  init(image: UIImage?) {
+    inputImage = image
+    super.init()
+  }
+
+  override func main() {
+    guard let inputImage = inputImage else { return }
+
+    guard let filter = TiltShiftFilter(image: inputImage),
+      let output = filter.outputImage else {
+        print("Failed to generate tilt shift image")
+        return
+    }
+
+    let fromRect = CGRect(origin: .zero, size: inputImage.size)
+    guard
+      let cgImage = TiltShiftOperation.context.createCGImage(output, from: fromRect),
+      let rendered = cgImage.rendered()
+      else {
+        print("No image generated")
+        return
+    }
+
+    outputImage = UIImage(cgImage: rendered)
+  }
+}
+
+extension TiltShiftOperation: ImageDataProvider {
+  var image: UIImage? { return outputImage }
+}

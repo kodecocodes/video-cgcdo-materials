@@ -29,3 +29,33 @@
 /// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 /// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 /// THE SOFTWARE.
+
+import SwiftUI
+
+struct ContentView: View {
+  @StateObject private var store = ImageStore()
+
+  var body: some View {
+    ScrollView {
+      LazyVStack {
+        ForEach(store.images) { image in
+          Image(uiImage: image.image)
+            .resizable()
+            .aspectRatio(contentMode: .fit)
+            .onAppear {
+              store.downloadImageOp(index: image.id)
+            }
+        }
+      }
+    }
+    .onAppear {
+      store.createImagesArray()
+    }
+  }
+}
+
+struct ContentView_Previews: PreviewProvider {
+  static var previews: some View {
+    ContentView()
+  }
+}

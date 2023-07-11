@@ -29,3 +29,70 @@
 /// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 /// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 /// THE SOFTWARE.
+
+import Foundation
+
+extension AsyncOperation {
+  enum State: String {
+    case ready, executing, finished
+
+    // swiftlint:disable:next strict_fileprivate
+    fileprivate var keyPath: String {
+      "is\(rawValue.capitalized)"
+    }
+  }
+}
+
+class AsyncOperation: Operation {
+  // Create thread-safe state management
+  private let stateQueue = DispatchQueue(label: "AsyncOperationState",
+                                         attributes: .concurrent)
+  private var stateValue: State = .ready
+  var state: State {
+    get {
+      stateQueue.sync { return stateValue }
+    }
+    set {
+      let oldValue = state
+      willChangeValue(forKey: newValue.keyPath)
+      willChangeValue(forKey: state.keyPath)
+      stateQueue.sync(flags: .barrier) {
+        stateValue = newValue
+      }
+      didChangeValue(forKey: oldValue.keyPath)
+      didChangeValue(forKey: state.keyPath)
+    }
+  }
+
+  // Override properties
+  override var isReady: Bool {
+    super.isReady && state == .ready
+  }
+
+  override var isExecuting: Bool {
+    state == .executing
+  }
+
+  override var isFinished: Bool {
+    state == .finished
+  }
+
+  override var isAsynchronous: Bool {
+    true
+  }
+
+  // Override methods
+  override func start() {
+    if isCancelled {
+      state = .finished
+      return
+    }
+    main()
+    state = .executing
+  }
+
+  override func cancel() {
+    super.cancel()
+    state = .finished
+  }
+}

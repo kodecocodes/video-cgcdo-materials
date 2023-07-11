@@ -29,3 +29,57 @@
 /// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 /// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 /// THE SOFTWARE.
+
+import SwiftUI
+
+struct DownloadedImage: Identifiable {
+  let id: Int
+  let url: URL
+  var image: UIImage
+}
+
+class ImageStore: ObservableObject {
+  @Published var images: [DownloadedImage] = []
+  var urls: [URL] = []
+  private let queue = OperationQueue()
+
+  func getUrls() {
+    guard
+      let plist = Bundle.main.url(forResource: "Photos", withExtension: "plist"),
+      let contents = try? Data(contentsOf: plist),
+      let serial = try? PropertyListSerialization.propertyList(from: contents, format: nil),
+      let serialUrls = serial as? [String] else {
+      print("Something went horribly wrong!")
+      return
+    }
+    urls = serialUrls.compactMap { URL(string: $0) }
+  }
+
+  func createImagesArray() {
+    getUrls()
+    for (index, url) in urls.enumerated() {
+      DispatchQueue.main.async { [weak self] in
+        guard let self else { return }
+        self.images.append(
+          DownloadedImage(
+            id: index,
+            url: url,
+            image: UIImage(systemName: "questionmark.square") ?? UIImage()))
+      }
+    }
+  }
+
+  func downloadImageOp(index: Int) {
+    let downloadOp = NetworkImageOperation(url: images[index].url)
+    let tiltShiftOp = TiltShiftOperation()
+    tiltShiftOp.addDependency(downloadOp)
+    tiltShiftOp.completionBlock = {
+      guard let image = tiltShiftOp.image else { return }
+      DispatchQueue.main.async {
+        self.images[index].image = image
+      }
+    }
+    queue.addOperation(downloadOp)
+    queue.addOperation(tiltShiftOp)
+  }
+}

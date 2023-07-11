@@ -29,3 +29,11 @@
 /// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 /// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 /// THE SOFTWARE.
+
+import Foundation
+
+public func duration(_ block: () -> ()) -> TimeInterval {
+  let startTime = Date()
+  block()
+  return Date().timeIntervalSince(startTime)
+}
