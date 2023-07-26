@@ -64,7 +64,8 @@ final class TiltShiftOperation: Operation {
         print("No image generated")
         return
     }
-
+    
+    guard !isCancelled else { return }
     outputImage = UIImage(cgImage: rendered)
   }
 }
