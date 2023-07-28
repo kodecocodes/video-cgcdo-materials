@@ -47,7 +47,6 @@ let filterQueue = OperationQueue()
 for image in images {
   // DONE: as above
   let filterOp = TiltShiftOperation(image: image)
-  filterQueue.addOperation(filterOp)
   // Completion block appends each filtered image to filteredImages array
   filterOp.completionBlock = {
     guard let output = filterOp.outputImage else { return }
@@ -55,6 +54,7 @@ for image in images {
       filteredImages.append(output)
     }
   }
+  filterQueue.addOperation(filterOp)
 }
 
 //: Wait for the `OperationQueue` to finish before checking the results
