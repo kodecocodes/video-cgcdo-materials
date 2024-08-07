@@ -1,6 +1,6 @@
 # iOS Concurrency with GCD & Operations: Materials
 
-This repo contains all the downloadable materials and projects associated with the **[iOS Concurrency with GCD & Operations](https://www.kodeco.com/library](https://www.kodeco.com/38462287-ios-concurrency-with-gcd-operations)** from [Kodeco](https://www.kodeco.com).
+This repo contains all the downloadable materials and projects associated with the **[iOS Concurrency with GCD & Operations](https://www.kodeco.com/38462287-ios-concurrency-with-gcd-operations)** from [Kodeco](https://www.kodeco.com).
 
 Each edition has its own branch, named `versions/[VERSION]`. The default branch for this repo is for the most recent edition.
 
